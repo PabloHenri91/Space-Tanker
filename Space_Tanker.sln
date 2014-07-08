@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space_Tanker", "Space_Tanker\Space_Tanker\Space_Tanker.csproj", "{630111D3-AF00-4163-B833-2A775231DCB9}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Space_TankerContent", "Space_Tanker\Space_TankerContent\Space_TankerContent.contentproj", "{A941FD11-56F7-4424-B4D3-6EEF8D041F9A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{630111D3-AF00-4163-B833-2A775231DCB9}.Debug|x86.ActiveCfg = Debug|x86
+		{630111D3-AF00-4163-B833-2A775231DCB9}.Debug|x86.Build.0 = Debug|x86
+		{630111D3-AF00-4163-B833-2A775231DCB9}.Release|x86.ActiveCfg = Release|x86
+		{630111D3-AF00-4163-B833-2A775231DCB9}.Release|x86.Build.0 = Release|x86
+		{A941FD11-56F7-4424-B4D3-6EEF8D041F9A}.Debug|x86.ActiveCfg = Debug|x86
+		{A941FD11-56F7-4424-B4D3-6EEF8D041F9A}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
