@@ -1,0 +1,27 @@
+﻿1: Música e efeitos sonoros
+
+2: Efeitos gráficos, faiscas, partículas de pedaços de nave que soltam quando uma nave é destruida
+
+3: Desenhar mais naves
+
+4: Redesenhar armas e projéteis
+
+5: Ajustar o peso das armas e munição, recarregar munição no inicio da missão
+
+6: Colocar um modo de sair do jogo no meio da missão e voltar para o hangar, Dobra espacial
+
+7: Ajustar sistema de energia, regarregar energia no inicio da missão
+
+8: Naves maiores no final de algumas missões, boss
+
+9: Ajustar "IA" de galinha dos inimigos
+
+OK 10: Fazer com que os inimigos encontrem o jogador mais rápido caso ele não esteja com nenhum inimigo visível na tela
+
+OK 11: Modificar a movimentação dos inimigos para que eles se movimentem da mesma forma que a nave do jogador
+
+12: Definir os atributos e armas de todos os inimigos
+
+13: Adicionar tela de resumo no final da missão
+
+14: Adicionar menu de pausa durante a missão ao apertar o botão de voltar

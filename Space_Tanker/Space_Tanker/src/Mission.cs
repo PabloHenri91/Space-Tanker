@@ -26,6 +26,7 @@ namespace Space_Tanker.src
         private int spawnedEnemies;
         private int shootsOnScreen;
         internal bool noEnemiesOnScree;
+        internal int lastNoEnemiesOnScree;
 
         SoundEffect music;
         SoundEffectInstance musicInstance;
@@ -108,6 +109,21 @@ namespace Space_Tanker.src
             translateMatrix(playerShip.position.X, playerShip.position.Y);
             playerShip.shoot = false;
             updateEnemies();
+
+            if (!noEnemiesOnScree)
+            {
+                lastNoEnemiesOnScree = Game1.frameCount;
+            }
+
+            if (Game1.frameCount - lastNoEnemiesOnScree > 90)
+            {
+                if (playerShip.body.health < playerShip.body.maxHealth)
+                {
+                    playerShip.body.health++;
+                }
+            }
+
+
             playerShip.updateWeapons();
             updateShots();
 
@@ -160,7 +176,7 @@ namespace Space_Tanker.src
             shootsOnScreen = 0;
             foreach (KeyValuePair<string, List<Shot>> list in shotList)
             {
-                
+
                 foreach (Shot shot in list.Value)
                 {
                     shot.update();

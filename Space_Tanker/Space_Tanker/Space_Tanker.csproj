@@ -217,6 +217,7 @@
     <Compile Include="src\Tileset.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Documentos\TODO.txt" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
