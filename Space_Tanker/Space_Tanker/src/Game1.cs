@@ -111,6 +111,7 @@ namespace Space_Tanker.src
             config = new Config();
             enemies = new Enemies();
             players = new Players();
+            players.loadPlayers();
 
             //save, load, new game...
             memoryCard = new MemoryCard();
