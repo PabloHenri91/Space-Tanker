@@ -26,11 +26,13 @@ namespace Space_Tanker.src
         private int drawCount;
         private int dps;
 #endif
+        //
+        public static ExplosionParticleSystem explosionParticleSystem;
 
         //Tela
         internal static Display display;
         GraphicsDeviceManager graphicsDeviceManager;
-        internal static SpriteBatch spriteBatch;
+        public static SpriteBatch spriteBatch;
 
         //Meu gerenciador de conteudo adicional.
         //Vai conter o conteudo do jogo, menos da tela de load.
@@ -109,7 +111,6 @@ namespace Space_Tanker.src
             config = new Config();
             enemies = new Enemies();
             players = new Players();
-            players.loadPlayers();
 
             //save, load, new game...
             memoryCard = new MemoryCard();
@@ -142,6 +143,9 @@ namespace Space_Tanker.src
 
             this.Window.OrientationChanged += onOrientationChanged;
 
+            explosionParticleSystem = new ExplosionParticleSystem(5);
+            explosionParticleSystem.Initialize();
+
             base.Initialize();
         }
 
@@ -158,6 +162,9 @@ namespace Space_Tanker.src
             Verdana12 = Content.Load<SpriteFont>("Verdana12");
             quartzMS20 = Content.Load<SpriteFont>("quartzMS20");
             voidTexture = Content.Load<Texture2D>("void");
+
+            explosionParticleSystem.LoadContent(Content);
+            
         }
 
         protected override void UnloadContent() { }
@@ -178,6 +185,8 @@ namespace Space_Tanker.src
                 {
                     case states.mission:
                         mission.doLogic();
+                        explosionParticleSystem.Update(gameTime);
+
                         break;
                     case states.mainMenu:
                         mainMenu.doLogic();
@@ -327,6 +336,7 @@ namespace Space_Tanker.src
                 {
                     case states.mission:
                         mission.draw();
+                        explosionParticleSystem.Draw(gameTime);
                         break;
                     case states.mainMenu:
                         mainMenu.draw();
@@ -388,6 +398,11 @@ namespace Space_Tanker.src
                     oversleep--;
                 }
             }
+        }
+
+        internal static float RandomBetween(float min, float max)
+        {
+            return min + (float)random.NextDouble() * (max - min);
         }
     }
 }

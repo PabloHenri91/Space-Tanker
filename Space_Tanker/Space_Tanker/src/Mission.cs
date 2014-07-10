@@ -25,8 +25,7 @@ namespace Space_Tanker.src
         internal float radians10 = MathHelper.ToRadians(10);
         private int spawnedEnemies;
         private int shootsOnScreen;
-        internal bool noEnemiesOnScree;
-        internal int lastNoEnemiesOnScree;
+        internal bool noEnemiesOnScreen;
 
         SoundEffect music;
         SoundEffectInstance musicInstance;
@@ -110,20 +109,6 @@ namespace Space_Tanker.src
             playerShip.shoot = false;
             updateEnemies();
 
-            if (!noEnemiesOnScree)
-            {
-                lastNoEnemiesOnScree = Game1.frameCount;
-            }
-
-            if (Game1.frameCount - lastNoEnemiesOnScree > 90)
-            {
-                if (playerShip.body.health < playerShip.body.maxHealth)
-                {
-                    playerShip.body.health++;
-                }
-            }
-
-
             playerShip.updateWeapons();
             updateShots();
 
@@ -141,7 +126,7 @@ namespace Space_Tanker.src
 
         private void updateEnemies()
         {
-            noEnemiesOnScree = true;
+            noEnemiesOnScreen = true;
             tryToSpawEnemyShip();
 
             foreach (EnemyShip enemyShip in enemyShipList)
@@ -216,7 +201,7 @@ namespace Space_Tanker.src
 
         private void spawnEnemyShip()
         {
-            int type = (int)(1f + (float)Game1.random.NextDouble() * Game1.memoryCard.mission);
+            int type = Game1.random.Next(1, Game1.memoryCard.mission + 1);
             EnemyShip enemyShip = new EnemyShip(textures2D["enemy" + type].width, textures2D["enemy" + type].height, type);
             enemyShipList.Add(enemyShip);
         }

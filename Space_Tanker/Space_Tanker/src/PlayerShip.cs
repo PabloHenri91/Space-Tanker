@@ -17,7 +17,7 @@ namespace Space_Tanker.src
         private float hipotenusa;
         private float dy;
         private float dx;
-        private Vector2 destination;
+        private Vector3 destination;
         private float totalRotation;
 
         //Auxiliares
@@ -31,7 +31,6 @@ namespace Space_Tanker.src
         private float force;
 
         //Projéteis
-        internal Dictionary<string, int> lastFire;
         internal bool shoot;
 
         internal PlayerShip(int width, int height, int x, int y)
@@ -45,7 +44,7 @@ namespace Space_Tanker.src
             body.energyShield = (Game1.memoryCard.level * Game1.config.spPerLevel) + ((Game1.memoryCard.shieldPower - 9) * Game1.config.spPerPower);
             body.maxEnergyShield = body.energyShield;
             shieldRechargeInterval = 100 - Game1.memoryCard.shieldRecharge;
-            destination = Vector2.Zero;
+            destination = Vector3.Zero;
             //body.Restitution = 0;
             body.Friction = 0f;
 
@@ -54,15 +53,6 @@ namespace Space_Tanker.src
             maxAngularVelocity = Game1.memoryCard.agility / 10f;
             maxLinearVelocity = (Game1.memoryCard.speed / 100f) * 3f;
             force = (Game1.memoryCard.acceleration / 100f) * 3f;
-
-            //projéteis
-            lastFire = new Dictionary<string, int>();
-            lastFire.Add("l1", Game1.frameCount);
-            lastFire.Add("c1", Game1.frameCount);
-            lastFire.Add("r1", Game1.frameCount);
-            lastFire.Add("l2", Game1.frameCount);
-            lastFire.Add("c2", Game1.frameCount);
-            lastFire.Add("r2", Game1.frameCount);
 
             //Weapons
             foreach (KeyValuePair<string, HardPoint> hardPoint in Game1.memoryCard.hardPoints)
@@ -73,11 +63,11 @@ namespace Space_Tanker.src
                 }
             }
 
-            Game1.memoryCard.energy = 1000 * Game1.memoryCard.level;
+            Game1.memoryCard.energy = 100 * Game1.memoryCard.level;
 
             for (int i = 0; i < Game1.memoryCard.ammo.Count; i++)
             {
-                Game1.memoryCard.ammo.Values.ElementAt(i).count = 10 * Game1.memoryCard.level;
+                Game1.memoryCard.ammo.Values.ElementAt(i).count = 5 * Game1.memoryCard.level;
             }
 
             body.OnCollision += playerBody_OnCollision;
@@ -87,17 +77,10 @@ namespace Space_Tanker.src
         {
             if (him.Body.IsBullet)
             {
-                if (him.Body.isEnergyBullet)
+                if (him.Body.demage <= me.Body.energyShield)
                 {
-                    if (him.Body.demage <= me.Body.energyShield)
-                    {
-                        me.Body.energyShield -= him.Body.demage;
-                        return false;
-                    }
-                    else
-                    {
-                        me.Body.health -= him.Body.demage;
-                    }
+                    me.Body.energyShield -= him.Body.demage;
+                    return false;
                 }
                 else
                 {
@@ -121,67 +104,69 @@ namespace Space_Tanker.src
         {
             if (body.health > 0)
             {
-                rechargeShield();
-
-                if (Game1.input.click0 || Game1.input.click1)
+                if (Game1.memoryCard.energy > 0)
                 {
-                    destination = new Vector2(Game1.input.mouseX, -Game1.input.mouseY);
-                    needToMove = true;
-                }
+                    rechargeShield();
 
-                if (needToMove)
-                {
-                    cateto_adjacente = destination.X - position.X;
-                    cateto_oposto = destination.Y - position.Y;
-                    hipotenusa = (float)Math.Sqrt((cateto_adjacente * cateto_adjacente) + (cateto_oposto * cateto_oposto));
-                }
-
-                if (Game1.input.mouse0)
-                { 
-                    rotation = MathHelper.Pi + (float)-Math.Atan2(position.X - Game1.input.mouseX, position.Y - -Game1.input.mouseY);
-                }
-                else
-                {
-                    rotation = MathHelper.Pi + (float)-Math.Atan2(position.X - destination.X, position.Y - destination.Y);
-                }
-
-                if (Math.Abs(body.AngularVelocity) < maxAngularVelocity && (needToMove || Game1.input.mouse0))
-                {
-                    totalRotation = rotation - body.Rotation;
-                    while (totalRotation < -MathHelper.Pi) totalRotation += MathHelper.TwoPi;
-                    while (totalRotation > MathHelper.Pi) totalRotation -= MathHelper.TwoPi;
-                    body.ApplyAngularImpulse(totalRotation * angularImpulse);
-                }
-
-                if (needToMove && Game1.memoryCard.energy > 0)
-                {
-                    if (hipotenusa < height)
+                    if (Game1.input.click0 || Game1.input.click1)
                     {
-                        needToMove = false;
+                        destination = new Vector3(Game1.input.mouseX, -Game1.input.mouseY, (float)Game1.frameCount);
+                        needToMove = true;
+                    }
+
+                    if (needToMove)
+                    {
+                        cateto_adjacente = destination.X - position.X;
+                        cateto_oposto = destination.Y - position.Y;
+                        hipotenusa = (float)Math.Sqrt((cateto_adjacente * cateto_adjacente) + (cateto_oposto * cateto_oposto));
+                    }
+
+                    if (Game1.input.mouse0)
+                    {
+                        rotation = MathHelper.Pi + (float)-Math.Atan2(position.X - Game1.input.mouseX, position.Y - -Game1.input.mouseY);
                     }
                     else
                     {
-                        if (needToMove && Math.Abs(totalRotation) < MathHelper.PiOver2 || Game1.input.mouse0)
+                        rotation = MathHelper.Pi + (float)-Math.Atan2(position.X - destination.X, position.Y - destination.Y);
+                    }
+
+                    if (Math.Abs(body.AngularVelocity) < maxAngularVelocity && (needToMove || Game1.input.mouse0))
+                    {
+                        totalRotation = rotation - body.Rotation;
+                        while (totalRotation < -MathHelper.Pi) totalRotation += MathHelper.TwoPi;
+                        while (totalRotation > MathHelper.Pi) totalRotation -= MathHelper.TwoPi;
+                        body.ApplyAngularImpulse(totalRotation * angularImpulse);
+                    }
+
+                    if (needToMove)
+                    {
+                        if (hipotenusa < height)
                         {
-                            if (Math.Abs(body.LinearVelocity.X) + Math.Abs(body.LinearVelocity.Y) < maxLinearVelocity)
+                            needToMove = false;
+                        }
+                        else
+                        {
+                            if (needToMove && Math.Abs(totalRotation) < MathHelper.PiOver2 || Game1.input.mouse0)
                             {
-                                if (Game1.input.mouse0)
+                                if (Math.Abs(body.LinearVelocity.X) + Math.Abs(body.LinearVelocity.Y) < maxLinearVelocity)
                                 {
-                                    dy = cateto_oposto / hipotenusa; //seno
-                                    dx = cateto_adjacente / hipotenusa; //cosseno
+                                    if (Game1.input.mouse0)
+                                    {
+                                        dy = cateto_oposto / hipotenusa; //seno
+                                        dx = cateto_adjacente / hipotenusa; //cosseno
+                                    }
+                                    else
+                                    {
+                                        dx = (float)-Math.Sin(body.Rotation);
+                                        dy = (float)Math.Cos(body.Rotation);
+                                    }
+                                    body.ApplyForce(new Vector2(dx * force, dy * force), body.Position);
+                                    Game1.memoryCard.energy--;
                                 }
-                                else
-                                {
-                                    dx = (float)-Math.Sin(body.Rotation);
-                                    dy = (float)Math.Cos(body.Rotation);
-                                }
-                                body.ApplyForce(new Vector2(dx * force, dy * force), body.Position);
-                                Game1.memoryCard.energy--;
                             }
                         }
                     }
                 }
-
             }
             else
             {
@@ -228,7 +213,6 @@ namespace Space_Tanker.src
                 }
 
                 //Fire
-                //if (Game1.input.mouse0 || shoot)
                 if (shoot)
                 {
                     if (!hardPoint.Value.isEmpty)
@@ -237,30 +221,18 @@ namespace Space_Tanker.src
                         {
                             if (Game1.memoryCard.energy - Game1.config.shopWeapons[hardPoint.Value.weaponName].energy > 0)
                             {
-                                //float rotationAux = MathHelper.Pi + (float)-Math.Atan2(position.X - Game1.input.mouseX, position.Y - -Game1.input.mouseY);
-                                //totalRotation = rotationAux - body.Rotation;
-                                //while (totalRotation < -MathHelper.Pi) totalRotation += MathHelper.TwoPi;
-                                //while (totalRotation > MathHelper.Pi) totalRotation -= MathHelper.TwoPi;
-                                //if (totalRotation < 0f) totalRotation *= -1f;
-
-                                //if (totalRotation < Game1.mission.radians10 || shoot)
+                                if (hardPoint.Key.Substring(1, 1) == "1")
                                 {
-                                    if (hardPoint.Key.Substring(1, 1) == "1")
+                                    if (Game1.frameCount % Game1.config.shootingInterval == 0)
                                     {
-                                        if (Game1.frameCount - lastFire[hardPoint.Key] > Game1.config.shootingInterval)
-                                        {
-                                            fire(hardPoint);
-                                        }
+                                        fire(hardPoint);
                                     }
-                                    else
+                                }
+                                else
+                                {
+                                    if (Game1.frameCount % Game1.config.shootingInterval == Game1.config.shootingInterval / 2)
                                     {
-                                        //if (Game1.frameCount - Game1.input.last0Touch > Game1.config.shootingInterval / 2 || shoot)
-                                        {
-                                            if (Game1.frameCount - lastFire[hardPoint.Key] > Game1.config.shootingInterval)
-                                            {
-                                                fire(hardPoint);
-                                            }
-                                        }
+                                        fire(hardPoint);
                                     }
                                 }
                             }
@@ -295,12 +267,10 @@ namespace Space_Tanker.src
             Shot shot = new Shot(Game1.mission.textures2D[hardPoint.Value.weaponName + "Shot"].width, Game1.mission.textures2D[hardPoint.Value.weaponName + "Shot"].height, (int)(position.X + auxX), (int)(position.Y + auxY), (float)dx, (float)dy, body.Rotation, Game1.config.shopWeapons[hardPoint.Value.weaponName].demage);
             shot.body.LinearVelocity = new Vector2(Game1.config.shotsMaxSpeed * dx, Game1.config.shotsMaxSpeed * dy);
             shot.body.isMyBullet = true;
-            shot.body.isEnergyBullet = Game1.config.shopWeapons[hardPoint.Value.weaponName].isEnergyWeapon;
             shot.body.IgnoreCollisionWith(Game1.mission.playerShip.body);
             Game1.mission.shotList[hardPoint.Value.weaponName].Add(shot);
             Game1.memoryCard.energy -= Game1.config.shopWeapons[hardPoint.Value.weaponName].energy;
             hardPoint.Value.ammoLoaded--;
-            lastFire[hardPoint.Key] = Game1.frameCount;
         }
 
         internal void rechargeShield()

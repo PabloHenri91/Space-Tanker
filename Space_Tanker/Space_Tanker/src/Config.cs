@@ -10,10 +10,10 @@ namespace Space_Tanker.src
     {
         //Spaceships
         internal int baseWeitght = ((64 * 64) / 10) + 100;
-        internal int hpPerArmor = 5;
+        internal int hpPerArmor = 4;
         internal int hpPerLevel = 2;
 
-        internal int spPerPower = 5;
+        internal int spPerPower = 3;
         internal int spPerLevel = 1;
 
         internal int shootingInterval = 6;
@@ -24,7 +24,7 @@ namespace Space_Tanker.src
 
         //Mission
         internal int spawningZone = 2;
-        internal short spawningInterval = 30 * 2;
+        internal short spawningInterval = 30;
 
         //shopWeapons
         #region

@@ -32,7 +32,6 @@ namespace Space_Tanker.src
         private float force;
 
         //Projéteis
-        internal Dictionary<string, int> lastFire;
         private Dictionary<string, EnemyHardPoint> hardPoints;
 
         //Random Move
@@ -63,18 +62,13 @@ namespace Space_Tanker.src
             force = Game1.enemies.enemyTypes[type].force;
 
             //projéteis
-            lastFire = new Dictionary<string, int>();
-            lastFire.Add("l", Game1.frameCount);
-            lastFire.Add("c", Game1.frameCount);
-            lastFire.Add("r", Game1.frameCount);
-
             hardPoints = new Dictionary<string, EnemyHardPoint>(Game1.enemies.enemyTypes[type].hardPoints);
 
             isOnScreen = true;
             while (isOnScreen)
             {
-                position.X = Game1.mission.playerShip.position.X + (float)(-Game1.display.displayWidthOver2 * Game1.config.spawningZone + (Game1.random.NextDouble() * (float)Game1.display.displayWidth * Game1.config.spawningZone));
-                position.Y = Game1.mission.playerShip.position.Y + (float)(-Game1.display.displayWidthOver2 * Game1.config.spawningZone + (Game1.random.NextDouble() * (float)Game1.display.displayWidth * Game1.config.spawningZone));
+                position.X = Game1.mission.playerShip.position.X + ((Game1.random.Next(-Game1.display.displayWidthOver2 * Game1.config.spawningZone, Game1.display.displayWidth * Game1.config.spawningZone)));
+                position.Y = Game1.mission.playerShip.position.Y + ((Game1.random.Next(-Game1.display.displayWidthOver2 * Game1.config.spawningZone, Game1.display.displayWidth * Game1.config.spawningZone)));
                 isOnScreen = onScreen();
             }
             
@@ -109,17 +103,10 @@ namespace Space_Tanker.src
         {
             if (him.Body.IsBullet)
             {
-                if (him.Body.isEnergyBullet)
+                if (him.Body.demage <= me.Body.energyShield)
                 {
-                    if (him.Body.demage <= me.Body.energyShield)
-                    {
-                        me.Body.energyShield -= him.Body.demage;
-                        return false;
-                    }
-                    else
-                    {
-                        me.Body.health -= him.Body.demage;
-                    }
+                    me.Body.energyShield -= him.Body.demage;
+                    return false;
                 }
                 else
                 {
@@ -142,6 +129,7 @@ namespace Space_Tanker.src
 
             if (me.Body.health <= 0)
             {
+                Game1.explosionParticleSystem.AddParticles(position);
                 me.Body.Dispose();
             }
 
@@ -226,7 +214,7 @@ namespace Space_Tanker.src
                         {
                             if (totalRotation < Game1.mission.radians10)
                             {
-                                if (Game1.frameCount - lastFire[hardPoint.Key] > Game1.config.shootingInterval)
+                                if (Game1.frameCount % Game1.config.shootingInterval == 0)
                                 {
                                     fire(hardPoint);
                                 }
@@ -261,11 +249,9 @@ namespace Space_Tanker.src
 
             Shot shot = new Shot(Game1.mission.textures2D[hardPoint.Value.weaponName + "Shot"].width, Game1.mission.textures2D[hardPoint.Value.weaponName + "Shot"].height, (int)(position.X + auxX), (int)(position.Y + auxY), (float)dx, (float)dy, body.Rotation, Game1.config.shopWeapons[hardPoint.Value.weaponName].demage);
             shot.body.LinearVelocity = new Vector2(Game1.config.shotsMaxSpeed * dx, Game1.config.shotsMaxSpeed * dy);
-            shot.body.isEnergyBullet = Game1.config.shopWeapons[hardPoint.Value.weaponName].isEnergyWeapon;
             shot.body.IgnoreCollisionWith(body);
             Game1.mission.shotList[hardPoint.Value.weaponName].Add(shot);
             hardPoint.Value.ammoLoaded--;
-            lastFire[hardPoint.Key] = Game1.frameCount;
         }
 
         private void seekPlayer()
@@ -300,13 +286,13 @@ namespace Space_Tanker.src
         {
             if (isOnScreen)
             {
-                Game1.mission.noEnemiesOnScree = false;
+                Game1.mission.noEnemiesOnScreen = false;
 
                 if (Game1.frameCount - lastMove > movingInterval)
                 {
                     lastMove = Game1.frameCount;
-                    movingInterval = 30 + (int)((float)Game1.random.NextDouble() * 150f);
-                    movingTipe = 1 + (int)((float)Game1.random.NextDouble() * 6f);
+                    movingInterval = Game1.random.Next(30, 150);
+                    movingTipe = movingTipe = Game1.random.Next(1, 6);
                     mouse0 = !mouse0;
                 }
 
@@ -316,7 +302,7 @@ namespace Space_Tanker.src
                     case 2:
                     case 3:
                         {
-                            destination = new Vector2(Game1.mission.playerShip.position.X + (float)(-Game1.display.displayWidthOver2 * Game1.config.spawningZone + (Game1.random.NextDouble() * (float)Game1.display.displayWidth * Game1.config.spawningZone)), Game1.mission.playerShip.position.Y + (float)(-Game1.display.displayWidthOver2 * Game1.config.spawningZone + (Game1.random.NextDouble() * (float)Game1.display.displayWidth * Game1.config.spawningZone)));
+                            destination = new Vector2(Game1.mission.playerShip.position.X + (Game1.random.Next(-Game1.display.displayWidthOver2 * Game1.config.spawningZone, Game1.display.displayWidth * Game1.config.spawningZone)), Game1.mission.playerShip.position.Y + (Game1.random.Next(-Game1.display.displayWidthOver2 * Game1.config.spawningZone, Game1.display.displayWidth * Game1.config.spawningZone)));
                             needToMove = true;
                             movingTipe = 0;
                         }
@@ -391,9 +377,10 @@ namespace Space_Tanker.src
                     }
                 }
             }
-            else if (Game1.mission.noEnemiesOnScree)
+            else if (Game1.mission.noEnemiesOnScreen)
             {
                 seekPlayer();
+                movingTipe = 4;
             }
         }
     }

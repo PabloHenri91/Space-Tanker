@@ -89,7 +89,6 @@ namespace FarseerPhysics.Dynamics
         public int health;
         public int maxHealth;
         public bool isMyBullet;
-        public bool isEnergyBullet;
         public int energyShield;
         public int maxEnergyShield;
 

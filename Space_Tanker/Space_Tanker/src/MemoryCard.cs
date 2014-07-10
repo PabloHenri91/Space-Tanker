@@ -79,12 +79,11 @@ namespace Space_Tanker.src
 
             sectorIndex = 0;
 
-            for (int i = 0; i < 4; i++)
+            foreach (KeyValuePair<string, HardPoint> item in hardPoints)
             {
                 Game1.config.shopWeapons[Game1.config.shopWeapons.First().Value.weaponName].inventoryAmount++;
-                hardPoints["c1"].addItem(Game1.config.shopWeapons.First().Value);
+                item.Value.addItem(Game1.config.shopWeapons.First().Value);
             }
-            
         }
 
         internal void saveGame()
@@ -106,7 +105,7 @@ namespace Space_Tanker.src
 
             sb.AppendLine("energy=" + energy);
 
-            foreach (KeyValuePair<string, Ammo> item in ammo)
+            foreach (var item in ammo)
             {
                 sb.AppendLine(item.Key + "=" + item.Value.count);
             }
