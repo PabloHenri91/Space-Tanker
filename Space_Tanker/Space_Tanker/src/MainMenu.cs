@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Input;
 
 namespace Space_Tanker.src
 {
@@ -134,31 +135,41 @@ namespace Space_Tanker.src
                     #region
                     case states.mainMenu:
                         {
+                            if (Game1.input.click0 || Game1.input.backButtonClick)
+                            {
+                                if (textures2D["quit"].intersectsWithMouseClick() || Game1.input.backButtonClick)
+                                {
+                                    Game1.nextState = Game1.states.quit; 
+                                    return;
+                                }
+                            }
+
                             if (Game1.input.click0)
                             {
                                 if (textures2D["newGame"].intersectsWithMouseClick())
                                 {
                                     nextState = states.newGame;
+                                    return;
                                 }
-                                else if (textures2D["loadGame"].intersectsWithMouseClick())
+                                if (textures2D["loadGame"].intersectsWithMouseClick())
                                 {
                                     nextState = states.loadGame;
+                                    return;
                                 }
-                                else if (textures2D["options"].intersectsWithMouseClick())
+                                if (textures2D["options"].intersectsWithMouseClick())
                                 {
                                     nextState = states.options;
+                                    return;
                                 }
-                                else if (textures2D["help"].intersectsWithMouseClick())
+                                if (textures2D["help"].intersectsWithMouseClick())
                                 {
                                     nextState = states.help;
+                                    return;
                                 }
-                                else if (textures2D["credits"].intersectsWithMouseClick())
+                                if (textures2D["credits"].intersectsWithMouseClick())
                                 {
                                     nextState = states.credits;
-                                }
-                                else if (textures2D["quit"].intersectsWithMouseClick())
-                                {
-                                    Game1.nextState = Game1.states.quit;
+                                    return;
                                 }
                             }
                         }
@@ -170,13 +181,18 @@ namespace Space_Tanker.src
                         {
                             angle += radians2;
                             textures2D["player" + shipIndex].setAngle(angle);
-                            if (Game1.input.click0)
+
+                            if (Game1.input.click0 || Game1.input.backButtonClick)
                             {
-                                if (textures2D["backButton"].intersectsWithMouseClick())
+                                if (textures2D["backButton"].intersectsWithMouseClick() || Game1.input.backButtonClick)
                                 {
                                     nextState = states.mainMenu;
                                     return;
                                 }
+                            }
+
+                            if (Game1.input.click0)
+                            {
                                 if (textures2D["newGame"].intersectsWithMouseClick())
                                 {
                                     Game1.config = new Config();
@@ -185,7 +201,7 @@ namespace Space_Tanker.src
                                     Game1.nextState = Game1.states.hangar;
                                     return;
                                 }
-                                if (textures2D["cancel"].intersectsWithMouseClick())
+                                if (textures2D["cancel"].intersectsWithMouseClick() || Game1.input.backButtonClick)
                                 {
                                     nextState = states.mainMenu;
                                     return;
@@ -234,7 +250,7 @@ namespace Space_Tanker.src
                     //case states.options:
                     #region
                     case states.options:
-                        if (Game1.input.click0)
+                        if (Game1.input.click0 || Game1.input.backButtonClick)
                         {
                             nextState = states.mainMenu;
                         }
@@ -243,7 +259,7 @@ namespace Space_Tanker.src
                     //case states.help:
                     #region
                     case states.help:
-                        if (Game1.input.click0)
+                        if (Game1.input.click0 || Game1.input.backButtonClick)
                         {
                             nextState = states.mainMenu;
                         }
@@ -252,7 +268,7 @@ namespace Space_Tanker.src
                     //case states.credits:
                     #region
                     case states.credits:
-                        if (Game1.input.click0)
+                        if (Game1.input.click0 || Game1.input.backButtonClick)
                         {
                             nextState = states.mainMenu;
                         }

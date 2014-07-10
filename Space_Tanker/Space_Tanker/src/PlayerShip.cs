@@ -140,7 +140,7 @@ namespace Space_Tanker.src
 
                     if (needToMove)
                     {
-                        if (hipotenusa < height)
+                        if (hipotenusa < height || Game1.frameCount - destination.Z > 30)
                         {
                             needToMove = false;
                         }
@@ -289,6 +289,36 @@ namespace Space_Tanker.src
         private void die()
         {
             Game1.nextState = Game1.states.mainMenu;
+        }
+
+        internal void jump()
+        {
+            if (Game1.memoryCard.energy >= 10)
+            {
+                body.ApplyForce(new Vector2((float)-Math.Sin(body.Rotation) * force * 2f, (float)Math.Cos(body.Rotation) * force * 2f), body.Position);
+                Game1.memoryCard.energy -= 10;
+
+                if (Math.Abs(body.LinearVelocity.X) + Math.Abs(body.LinearVelocity.Y) > maxLinearVelocity)
+                {
+                    if (Game1.input.backButtonPressedCount > 90)
+                    {
+                        Game1.nextState = Game1.states.hangar;
+                    }
+                }
+            }
+            else
+            {
+                body.ApplyForce(new Vector2((float)-Math.Sin(body.Rotation) * force * 2f, (float)Math.Cos(body.Rotation) * force * 2f), body.Position);
+                body.health --;
+
+                if (Math.Abs(body.LinearVelocity.X) + Math.Abs(body.LinearVelocity.Y) > maxLinearVelocity)
+                {
+                    if (Game1.input.backButtonPressedCount > 90)
+                    {
+                        Game1.nextState = Game1.states.hangar;
+                    }
+                }
+            }
         }
     }
 }

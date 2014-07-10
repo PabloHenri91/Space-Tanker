@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,10 @@ namespace Space_Tanker.src
         MouseState mouseState, lastMouseState;
         private int lastMouseX;
         private int lastMouseY;
+        public bool backButtonPressed;
+        public bool backButtonClick;
+        public bool lastBackButtonPressed;
+        internal int backButtonPressedCount;
 
 #if WINDOWS_PHONE
         private int maximumTouchCount;
@@ -42,9 +47,30 @@ namespace Space_Tanker.src
 
         internal void update()
         {
-            if (mouse0 || click0 || click1)
+            if (mouse0 || click0 || click1 || backButtonPressed)
             {
                 Game1.needToDraw = true;
+            }
+
+            lastBackButtonPressed = backButtonPressed;
+
+#if WINDOWS
+            backButtonPressed = GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape);
+#endif
+#if WINDOWS_PHONE
+            backButtonPressed = GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed;
+#endif
+
+            backButtonClick = !backButtonPressed && lastBackButtonPressed;
+            
+
+            if (backButtonPressed)
+            {
+                backButtonPressedCount += 1;
+            }
+            else
+            {
+                backButtonPressedCount = 0;
             }
 
             switch (Game1.state)

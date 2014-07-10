@@ -7,6 +7,7 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Common.PhysicsLogic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Input;
 
 namespace Space_Tanker.src
 {
@@ -29,6 +30,10 @@ namespace Space_Tanker.src
 
         SoundEffect music;
         SoundEffectInstance musicInstance;
+
+        //Explosions
+        public ExplosionParticleSystem explosionParticleSystem;
+        private bool needToJump;
 
         internal Mission()
             : base()
@@ -96,12 +101,33 @@ namespace Space_Tanker.src
             enemyShipCount = Game1.memoryCard.mission + 1;
             spawnedEnemies = 0;
 
+            explosionParticleSystem = new ExplosionParticleSystem(5);
+            explosionParticleSystem.Initialize();
+            explosionParticleSystem.LoadContent();
+
             return true;
         }
 
         internal void doLogic()
         {
-            Game1.world.Step(1f / 10f);
+#if WINDOWS
+            if (Game1.input.backButtonPressed)
+            {
+                playerShip.jump();
+            }
+#endif
+#if WINDOWS_PHONE
+            if (Game1.input.backButtonClick)
+            {
+                needToJump = !needToJump;
+            }
+            if (needToJump)
+            {
+                playerShip.jump();
+            }
+#endif
+            
+            Game1.world.Step(3f / Game1.fps);
             Game1.needToDraw = true;
 
             playerShip.updatePlayer();
@@ -116,6 +142,8 @@ namespace Space_Tanker.src
             {
                 Game1.nextState = Game1.states.mainMenu;
             }
+
+            explosionParticleSystem.Update();
         }
 
         private void translateMatrix(float x, float y)
@@ -234,7 +262,11 @@ namespace Space_Tanker.src
             textures2D["player" + Game1.memoryCard.shipIndex].draw((int)playerShip.position.X, (int)playerShip.position.Y, (float)playerShip.rotation);
             playerShip.drawHealthBar();
 
+            explosionParticleSystem.Draw();
+
             drawHUD();
+
+
         }
 
         private void drawHUD()

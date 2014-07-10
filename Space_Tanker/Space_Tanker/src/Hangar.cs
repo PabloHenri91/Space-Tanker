@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Input;
 
 namespace Space_Tanker.src
 {
     class Hangar : State
     {
-        enum states { loading, hangar, supplyRoom, equipment, shop, chooseSector, chooseMisson, saveGame };
+        enum states { loading, hangar, supplyRoom, chooseSector, chooseMisson, saveGame };
         states state;
         states nextState;
 
@@ -234,14 +235,18 @@ namespace Space_Tanker.src
                     case states.hangar:
                         {
                             textures2D["player" + Game1.memoryCard.shipIndex].setAngle(angle += radians2);
-                            if (Game1.input.click0)
+
+                            if (Game1.input.click0 || Game1.input.backButtonClick)
                             {
-                                if (textures2D["backButton"].intersectsWithMouseClick())
+                                if (textures2D["backButton"].intersectsWithMouseClick() || Game1.input.backButtonClick)
                                 {
                                     Game1.nextState = Game1.states.mainMenu;
                                     return;
                                 }
+                            }
 
+                            if (Game1.input.click0)
+                            {
                                 if (textures2D["playMission"].intersectsWithMouseClick())
                                 {
                                     nextState = states.chooseSector;
@@ -385,14 +390,17 @@ namespace Space_Tanker.src
                     case states.supplyRoom:
                         {
                             textures2D["player" + Game1.memoryCard.shipIndex].setAngle(angle += radians2);
-                            if (Game1.input.click0)
+                            if (Game1.input.click0 || Game1.input.backButtonClick)
                             {
-                                if (textures2D["backButton"].intersectsWithMouseClick())
+                                if (textures2D["backButton"].intersectsWithMouseClick() || Game1.input.backButtonClick)
                                 {
                                     nextState = states.hangar;
                                     return;
                                 }
+                            }
 
+                            if (Game1.input.click0)
+                            {
                                 //Shop
                                 if (textures2D["leftWeapon"].intersectsWithMouseClick())
                                 {
@@ -444,185 +452,6 @@ namespace Space_Tanker.src
                         }
                         break;
                     #endregion
-                    //case states.equipment:
-                    #region
-                    case states.equipment:
-                        {
-                            if (Game1.input.click0)
-                            {
-                                if (textures2D["backButton"].intersectsWithMouseClick())
-                                {
-                                    nextState = states.supplyRoom;
-                                }
-
-                                foreach (KeyValuePair<string, HardPoint> weaponSlot in Game1.memoryCard.hardPoints)
-                                {
-                                    if (!weaponSlot.Value.isEmpty)
-                                    {
-                                        if (textures2D["weaponSlot"].intersectsWithMouseClick(weaponSlot.Value.position))
-                                        {
-                                            weaponSlot.Value.removeItem();
-                                            resetItensPositions();
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (getItem)
-                            {
-                                if (!Game1.input.mouse0)
-                                {
-                                    foreach (KeyValuePair<string, HardPoint> weaponSlot in Game1.memoryCard.hardPoints)
-                                    {
-                                        if (textures2D["weaponSlot"].intersectsWithMouseClick(weaponSlot.Value.position))
-                                        {
-                                            if (weaponSlot.Value.addItem(mouseItem))
-                                            {
-                                                getItem = false;
-                                                mouseItem = null;
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    if (mouseItem != null)
-                                    {
-                                        getItem = false;
-                                        mouseItemRef.inventoryAmount++;
-                                        mouseItem = null;
-                                    }
-                                }
-                                else
-                                {
-                                    mouseItem.position = new Vector2(Game1.input.onScreenMouseX - textures2D[mouseItem.textureReference].width / 2, Game1.input.onScreenMouseY - textures2D[mouseItem.textureReference].height / 2);
-                                }
-                            }
-                            else
-                            {
-                                if (Math.Abs(Game1.input.totalDy) > 10)
-                                {
-                                    if (Game1.input.dy < 0)
-                                    {
-                                        //mooving up
-                                        try
-                                        {
-                                            if (Game1.config.shopWeapons.Last(item => item.Value.inventoryAmount > 0).Value.position.Y + (Game1.input.dy * 2) > 173)
-                                            {
-                                                foreach (KeyValuePair<string, ShopWeapon> item in Game1.config.shopWeapons)
-                                                {
-                                                    if (item.Value.inventoryAmount > 0)
-                                                    {
-                                                        item.Value.position.Y = item.Value.position.Y + (Game1.input.dy * 2);
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                int auxDx = (int)(173 - Game1.config.shopWeapons.Last(item => item.Value.inventoryAmount > 0).Value.position.Y);
-
-                                                foreach (KeyValuePair<string, ShopWeapon> item in Game1.config.shopWeapons)
-                                                {
-                                                    if (item.Value.inventoryAmount > 0)
-                                                    {
-                                                        item.Value.position.Y = item.Value.position.Y + auxDx;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        catch (InvalidOperationException) { }
-                                    }
-                                    else
-                                    {
-                                        //mooving down
-                                        //Game1.input.dy > 0
-                                        try
-                                        {
-                                            if (Game1.config.shopWeapons.First(item => item.Value.inventoryAmount > 0).Value.position.Y + Game1.input.dy * 2 < 173)
-                                            {
-                                                foreach (KeyValuePair<string, ShopWeapon> item in Game1.config.shopWeapons)
-                                                {
-                                                    if (item.Value.inventoryAmount > 0)
-                                                    {
-                                                        item.Value.position.Y = item.Value.position.Y + Game1.input.dy * 2;
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                int auxDx = (int)(173 - Game1.config.shopWeapons.First(item => item.Value.inventoryAmount > 0).Value.position.Y);
-
-                                                foreach (KeyValuePair<string, ShopWeapon> item in Game1.config.shopWeapons)
-                                                {
-                                                    if (item.Value.inventoryAmount > 0)
-                                                    {
-                                                        item.Value.position.Y = item.Value.position.Y + auxDx;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        catch (InvalidOperationException) { }
-                                    }
-                                }
-                                else if (Math.Abs(Game1.input.totalDx) > 20)
-                                {
-                                    foreach (KeyValuePair<string, ShopWeapon> item in Game1.config.shopWeapons)
-                                    {
-                                        if (item.Value.inventoryAmount > 0)
-                                        {
-                                            if (textures2D[item.Value.textureReference].intersectsWithMouseClick(item.Value.position))
-                                            {
-                                                getItem = true;
-
-                                                mouseItem = new ShopWeapon(item.Value);
-                                                mouseItem.position = new Vector2(Game1.input.onScreenMouseX - textures2D[mouseItem.textureReference].width / 2, Game1.input.onScreenMouseY - textures2D[mouseItem.textureReference].height / 2);
-
-                                                mouseItemRef = item.Value;
-                                                mouseItemRef.inventoryAmount--;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    #endregion
-                    //case states.shop:
-                    #region
-                    case states.shop:
-                        {
-                            if (Game1.input.click0)
-                            {
-                                if (textures2D["backButton"].intersectsWithMouseClick())
-                                {
-                                    nextState = states.supplyRoom;
-                                }
-                                else if (textures2D["left"].intersectsWithMouseClick())
-                                {
-                                    if (itenIndex > 0)
-                                    {
-                                        itenIndex--;
-                                    }
-                                }
-                                else if (textures2D["right"].intersectsWithMouseClick())
-                                {
-                                    if (itenIndex < Game1.config.shopWeapons.Count - 1)
-                                    {
-                                        itenIndex++;
-                                    }
-                                }
-                                else if (textures2D["buy"].intersectsWithMouseClick())
-                                {
-                                    Game1.config.shopWeapons.Values.ElementAt(itenIndex).buy();
-                                }
-                                else if (textures2D["sell"].intersectsWithMouseClick())
-                                {
-                                    Game1.config.shopWeapons.Values.ElementAt(itenIndex).sell();
-                                }
-                            }
-                        }
-                        break;
-                    #endregion
                     //case states.chooseSector:
                     #region
                     case states.chooseSector:
@@ -652,13 +481,17 @@ namespace Space_Tanker.src
                                 }
                             }
 
-                            if (Game1.input.click0)
+                            if (Game1.input.click0 || Game1.input.backButtonClick)
                             {
-                                if (textures2D["backButton"].intersectsWithMouseClick())
+                                if (textures2D["backButton"].intersectsWithMouseClick() || Game1.input.backButtonClick)
                                 {
                                     nextState = states.hangar;
+                                    return;
                                 }
+                            }
 
+                            if (Game1.input.click0)
+                            {
                                 for (int i = 0; i < 10; i++)
                                 {
                                     if (textures2D["sectorBox"].intersectsWithMouseClick(Game1.config.vectors2["sectorBox" + i]))
@@ -667,6 +500,7 @@ namespace Space_Tanker.src
                                         {
                                             nextState = states.chooseMisson;
                                             Game1.memoryCard.sectorIndex = i;
+                                            return;
                                         }
                                     }
                                 }
@@ -678,13 +512,17 @@ namespace Space_Tanker.src
                     #region
                     case states.chooseMisson:
                         {
-                            if (Game1.input.click0)
+                            if (Game1.input.click0 || Game1.input.backButtonClick)
                             {
-                                if (textures2D["backButton"].intersectsWithMouseClick())
+                                if (textures2D["backButton"].intersectsWithMouseClick() || Game1.input.backButtonClick)
                                 {
                                     nextState = states.chooseSector;
+                                    return;
                                 }
+                            }
 
+                            if (Game1.input.click0)
+                            {
                                 for (int y = 0; y < 10; y++)
                                 {
                                     if (y < 5)
@@ -695,8 +533,8 @@ namespace Space_Tanker.src
                                             {
                                                 Game1.memoryCard.mission = Convert.ToInt32((Game1.memoryCard.sectorIndex) + "" + y);
                                                 Game1.nextState = Game1.states.mission;
+                                                return;
                                             }
-                                            break;
                                         }
                                     }
                                     else
@@ -707,8 +545,8 @@ namespace Space_Tanker.src
                                             {
                                                 Game1.memoryCard.mission = Convert.ToInt32((Game1.memoryCard.sectorIndex) + "" + y);
                                                 Game1.nextState = Game1.states.mission;
+                                                return;
                                             }
-                                            break;
                                         }
                                     }
                                 }
@@ -720,16 +558,22 @@ namespace Space_Tanker.src
                     #region
                     case states.saveGame:
                         {
+                            if (Game1.input.click0 || Game1.input.backButtonClick)
+                            {
+                                if (textures2D["no"].intersectsWithMouseClick() || Game1.input.backButtonClick)
+                                {
+                                    nextState = states.hangar;
+                                    return;
+                                }
+                            }
+
                             if (Game1.input.click0)
                             {
                                 if (textures2D["yes"].intersectsWithMouseClick())
                                 {
                                     Game1.memoryCard.saveGame();
                                     nextState = states.hangar;
-                                }
-                                else if (textures2D["no"].intersectsWithMouseClick())
-                                {
-                                    nextState = states.hangar;
+                                    return;
                                 }
                             }
                         }
@@ -772,22 +616,6 @@ namespace Space_Tanker.src
                             Game1.config.vectors2["availableWeightText"] = new Vector2(105, 303);
 
                             Game1.config.vectors2["scoreText"] = new Vector2(130, 13);
-                        }
-                        break;
-                    #endregion
-                    //case states.shop:
-                    #region
-                    case states.shop:
-                        {
-                        }
-                        break;
-                    #endregion
-                    //case states.equipment:
-                    #region
-                    case states.equipment:
-                        {
-                            resetItensPositions();
-                            textures2D["player" + Game1.memoryCard.shipIndex].setPosition(515, 240);
                         }
                         break;
                     #endregion
@@ -1132,100 +960,6 @@ namespace Space_Tanker.src
                     }
                     break;
                 #endregion
-                //case states.equipment:
-                #region
-                case states.equipment:
-                    {
-                        textures2D["weaponsBackground"].drawOnScreen();
-                        textures2D["backButton"].drawOnScreen();
-
-                        if (Game1.input.mouse0)
-                        {
-                            if (textures2D["backButton"].intersectsWithMouseClick())
-                            {
-                                textures2D["backButtonPressed"].drawOnScreen();
-                            }
-                        }
-
-                        foreach (KeyValuePair<string, ShopWeapon> shopWeapon in Game1.config.shopWeapons)
-                        {
-                            if (shopWeapon.Value.inventoryAmount > 0)
-                            {
-                                textures2D[shopWeapon.Value.textureReference].drawOnScreen(shopWeapon.Value.position);
-                                Game1.spriteBatch.DrawString(Game1.Verdana12, "" + shopWeapon.Value.textWeaponName, new Vector2(shopWeapon.Value.position.X + 10, shopWeapon.Value.position.Y + 10), Color.White);
-                                Game1.spriteBatch.DrawString(Game1.Verdana12, "" + shopWeapon.Value.inventoryAmount, new Vector2(shopWeapon.Value.position.X + 10, shopWeapon.Value.position.Y + 110), Color.White);
-                            }
-                        }
-
-                        textures2D["player" + Game1.memoryCard.shipIndex].drawOnScreen();
-
-                        foreach (KeyValuePair<string, HardPoint> weaponSlot in Game1.memoryCard.hardPoints)
-                        {
-                            if (weaponSlot.Value.isEmpty)
-                            {
-                                textures2D["weaponSlotLocked"].drawOnScreen(weaponSlot.Value.position);
-                            }
-                            else
-                            {
-                                textures2D["weaponSlot"].drawOnScreen(weaponSlot.Value.position);
-                                textures2D[weaponSlot.Value.textureReference].drawOnScreen(weaponSlot.Value.position);
-                                Game1.spriteBatch.DrawString(Game1.Verdana12, "" + Game1.config.shopWeapons[weaponSlot.Value.weaponName].textWeaponName, new Vector2(weaponSlot.Value.position.X + 10, weaponSlot.Value.position.Y + 10), Color.White);
-                                Game1.spriteBatch.DrawString(Game1.Verdana12, "" + weaponSlot.Value.amountEquiped, new Vector2(weaponSlot.Value.position.X + 10, weaponSlot.Value.position.Y + 110), Color.White);
-                            }
-                        }
-
-                        if (mouseItem != null)
-                        {
-                            textures2D[mouseItem.textureReference].drawOnScreen(mouseItem.position);
-                            Game1.spriteBatch.DrawString(Game1.Verdana12, "" + mouseItem.textWeaponName, new Vector2(mouseItem.position.X + 10, mouseItem.position.Y + 10), Color.White);
-                        }
-                    }
-                    break;
-                #endregion
-                //case states.shop:
-                #region
-                case states.shop:
-                    {
-                        textures2D["shopBackground"].drawOnScreen();
-                        textures2D["backButton"].drawOnScreen();
-                        textures2D["left"].drawOnScreen();
-                        textures2D["right"].drawOnScreen();
-                        textures2D["buy"].drawOnScreen();
-                        textures2D["sell"].drawOnScreen();
-
-                        if (Game1.input.mouse0)
-                        {
-                            if (textures2D["backButton"].intersectsWithMouseClick())
-                            {
-                                textures2D["backButtonPressed"].drawOnScreen();
-                            }
-                            else if (textures2D["left"].intersectsWithMouseClick())
-                            {
-                                textures2D["leftPressed"].drawOnScreen();
-                            }
-                            else if (textures2D["right"].intersectsWithMouseClick())
-                            {
-                                textures2D["rightPressed"].drawOnScreen();
-                            }
-                            else if (textures2D["buy"].intersectsWithMouseClick())
-                            {
-                                textures2D["buyPressed"].drawOnScreen();
-                            }
-                            else if (textures2D["sell"].intersectsWithMouseClick())
-                            {
-                                textures2D["sellPressed"].drawOnScreen();
-                            }
-                        }
-
-                        //ShopWeapon
-                        Game1.spriteBatch.DrawString(Game1.Verdana12, Game1.config.shopWeapons.Values.ElementAt(itenIndex).textWeaponName, Game1.config.vectors2["itemNameText"], Color.White);
-                        Game1.spriteBatch.DrawString(Game1.Verdana12, "$" + Game1.config.shopWeapons.Values.ElementAt(itenIndex).price, Game1.config.vectors2["itemPriceText"], Color.White);
-                        Game1.spriteBatch.DrawString(Game1.Verdana12, "$" + Game1.memoryCard.score, Game1.config.vectors2["scoreText"], Color.White);
-                        Game1.spriteBatch.DrawString(Game1.Verdana12, "You have: " + Game1.config.shopWeapons.Values.ElementAt(itenIndex).inventoryAmount, Game1.config.vectors2["itemAmountText"], Color.White);
-                        textures2D[Game1.config.shopWeapons.Values.ElementAt(itenIndex).textureReference].drawOnScreen(Game1.config.vectors2["itemTexture"]);
-                    }
-                    break;
-                #endregion
                 //case states.chooseSector:
                 #region
                 case states.chooseSector:
@@ -1364,7 +1098,7 @@ namespace Space_Tanker.src
         }
         #endregion
 
-        //Equipment
+        //SupplyRoom
         #region
         private void drawAtributeBar(Vector2 position, int health, int maxHealth, string color)
         {

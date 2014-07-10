@@ -72,10 +72,10 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Explosion\ExplosionParticleSystem.cs" />
-    <Compile Include="Explosion\Particle.cs" />
-    <Compile Include="Explosion\ParticleSystem.cs" />
-    <Compile Include="Explosion\SmokePlumeParticleSystem.cs" />
+    <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
+    <Compile Include="ParticleSystems\Particle.cs" />
+    <Compile Include="ParticleSystems\ParticleSystem.cs" />
+    <Compile Include="ParticleSystems\SmokePlumeParticleSystem.cs" />
     <Compile Include="Farseer\Collision\Collision.cs" />
     <Compile Include="Farseer\Collision\Distance.cs" />
     <Compile Include="Farseer\Collision\DynamicTree.cs" />

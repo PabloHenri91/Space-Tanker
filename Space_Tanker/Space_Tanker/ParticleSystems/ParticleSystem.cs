@@ -129,6 +129,11 @@ namespace Space_Tanker.src
         /// </summary>
 		protected BlendState blendState;
 
+        // calculate dt, the change in the since the last frame. the particle
+        // updates will use this value.
+        private float dt = 1f / Game1.fps;
+        
+
         #endregion
         
         /// <summary>
@@ -183,7 +188,7 @@ namespace Space_Tanker.src
         /// Override the base class LoadContent to load the texture. once it's
         /// loaded, calculate the origin.
         /// </summary>
-        public void LoadContent(ContentManager contentManager)
+        public void LoadContent()
         {
             // make sure sub classes properly set textureFilename.
             if (string.IsNullOrEmpty(textureFilename))
@@ -195,7 +200,7 @@ namespace Space_Tanker.src
                 throw new InvalidOperationException(message);
             }
             // load the texture....
-            texture = new Sprite(textureFilename, contentManager).texture;
+            texture = new Sprite(textureFilename).texture;
 
             // ... and calculate the center. this'll be used in the draw call, we
             // always want to rotate and scale around this point.
@@ -276,12 +281,8 @@ namespace Space_Tanker.src
         /// overriden from DrawableGameComponent, Update will update all of the active
         /// particles.
         /// </summary>
-        public void Update(GameTime gameTime)
+        public void Update()
         {
-            // calculate dt, the change in the since the last frame. the particle
-            // updates will use this value.
-            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
             // go through all of the particles...
             foreach (Particle p in particles)
             {
@@ -304,7 +305,7 @@ namespace Space_Tanker.src
         /// overriden from DrawableGameComponent, Draw will use Game1's 
         /// sprite batch to render all of the active particles.
         /// </summary>
-        public void Draw(GameTime gameTime)
+        public void Draw()
         {
             Game1.spriteBatch.End();
             // tell sprite batch to begin, using the spriteBlendMode specified in

@@ -8,7 +8,7 @@
 
 5: Ajustar o peso das armas e munição, recarregar munição no inicio da missão
 
-6: Colocar um modo de sair do jogo no meio da missão e voltar para o hangar, Dobra espacial
+OK 6: Colocar um modo de sair do jogo no meio da missão e voltar para o hangar, Dobra espacial
 
 7: Ajustar sistema de energia, regarregar energia no inicio da missão
 
@@ -25,3 +25,5 @@ OK 11: Modificar a movimentação dos inimigos para que eles se movimentem da me
 13: Adicionar tela de resumo no final da missão
 
 14: Adicionar menu de pausa durante a missão ao apertar o botão de voltar
+
+OK 15: Corrigir bug "nave andando em circulos infinitamente

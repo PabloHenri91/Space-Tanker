@@ -26,9 +26,6 @@ namespace Space_Tanker.src
         private int drawCount;
         private int dps;
 #endif
-        //
-        public static ExplosionParticleSystem explosionParticleSystem;
-
         //Tela
         internal static Display display;
         GraphicsDeviceManager graphicsDeviceManager;
@@ -79,7 +76,7 @@ namespace Space_Tanker.src
         internal static bool needToDraw;
         private int lastMilliseconds;
         private int elapsedMilliseconds;
-        private static int fps = 30;
+        internal static int fps = 30;
         private int frameDuration = (int)(1000f / fps);
         private int last;
         private int elapsed;
@@ -129,6 +126,7 @@ namespace Space_Tanker.src
             //Iniciando enstrada
             input = new Input();
             input.setup();
+            
 
             //definindo estados
             state = states.loading;
@@ -143,9 +141,6 @@ namespace Space_Tanker.src
             world = new World(Vector2.Zero);
 
             this.Window.OrientationChanged += onOrientationChanged;
-
-            explosionParticleSystem = new ExplosionParticleSystem(5);
-            explosionParticleSystem.Initialize();
 
             base.Initialize();
         }
@@ -163,9 +158,6 @@ namespace Space_Tanker.src
             Verdana12 = Content.Load<SpriteFont>("Verdana12");
             quartzMS20 = Content.Load<SpriteFont>("quartzMS20");
             voidTexture = Content.Load<Texture2D>("void");
-
-            explosionParticleSystem.LoadContent(Content);
-            
         }
 
         protected override void UnloadContent() { }
@@ -186,8 +178,6 @@ namespace Space_Tanker.src
                 {
                     case states.mission:
                         mission.doLogic();
-                        explosionParticleSystem.Update(gameTime);
-
                         break;
                     case states.mainMenu:
                         mainMenu.doLogic();
@@ -231,7 +221,7 @@ namespace Space_Tanker.src
                 loadScreenLoaded = loadScreen.load(Content);
             }
 
-            if (nextState == states.quit || GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (nextState == states.quit)
                 this.Exit();
 
             base.Update(gameTime);
@@ -337,7 +327,6 @@ namespace Space_Tanker.src
                 {
                     case states.mission:
                         mission.draw();
-                        explosionParticleSystem.Draw(gameTime);
                         break;
                     case states.mainMenu:
                         mainMenu.draw();

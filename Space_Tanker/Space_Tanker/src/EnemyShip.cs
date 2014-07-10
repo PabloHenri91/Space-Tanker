@@ -129,7 +129,7 @@ namespace Space_Tanker.src
 
             if (me.Body.health <= 0)
             {
-                Game1.explosionParticleSystem.AddParticles(position);
+                Game1.mission.explosionParticleSystem.AddParticles(position);
                 me.Body.Dispose();
             }
 
@@ -260,7 +260,7 @@ namespace Space_Tanker.src
 
             if (Math.Abs(totalRotation) < MathHelper.PiOver2)
             {
-                if (Math.Abs(body.LinearVelocity.X) + Math.Abs(body.LinearVelocity.Y) < maxLinearVelocity)
+                //if (Math.Abs(body.LinearVelocity.X) + Math.Abs(body.LinearVelocity.Y) < maxLinearVelocity + maxLinearVelocity)
                 {
                     dx = (float)-Math.Sin(body.Rotation);
                     dy = (float)Math.Cos(body.Rotation);

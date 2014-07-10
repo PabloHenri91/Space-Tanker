@@ -70,13 +70,6 @@ namespace Space_Tanker.src
             shieldPower = 10 + Game1.players.playerTypes[playerShip].shieldPowerBonus;
             shieldRecharge = 10 + Game1.players.playerTypes[playerShip].shieldRechargeBonus;
 
-            energy = 100000;
-
-            for (int i = 0; i < ammo.Count; i++)
-            {
-                ammo.Values.ElementAt(i).count = 1000;
-            }
-
             sectorIndex = 0;
 
             foreach (KeyValuePair<string, HardPoint> item in hardPoints)
