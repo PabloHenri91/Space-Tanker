@@ -110,13 +110,6 @@ namespace Space_Tanker.src
 
         internal void doLogic()
         {
-#if WINDOWS
-            if (Game1.input.backButtonPressed)
-            {
-                playerShip.jump();
-            }
-#endif
-#if WINDOWS_PHONE
             if (Game1.input.backButtonClick)
             {
                 needToJump = !needToJump;
@@ -124,9 +117,13 @@ namespace Space_Tanker.src
             if (needToJump)
             {
                 playerShip.jump();
+                Game1.input.backButtonPressedCount++;
             }
-#endif
-            
+            else
+            {
+                Game1.input.backButtonPressedCount = 0;
+            }
+
             Game1.world.Step(3f / Game1.fps);
             Game1.needToDraw = true;
 

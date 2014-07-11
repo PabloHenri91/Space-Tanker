@@ -17,7 +17,7 @@ namespace Space_Tanker.src
         internal int mouseX, mouseY, onScreenMouseX, onScreenMouseY, last0Touch, last1Touch, touchInterval, totalDx, totalDy, dx, dy;
         internal bool mouse0, click0, click1;
         private bool startMooving;
-        
+
         MouseState mouseState, lastMouseState;
         private int lastMouseX;
         private int lastMouseY;
@@ -47,7 +47,7 @@ namespace Space_Tanker.src
 
         internal void update()
         {
-            if (mouse0 || click0 || click1 || backButtonPressed)
+            if (mouse0 || click0 || backButtonPressed)
             {
                 Game1.needToDraw = true;
             }
@@ -55,23 +55,13 @@ namespace Space_Tanker.src
             lastBackButtonPressed = backButtonPressed;
 
 #if WINDOWS
-            backButtonPressed = GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape);
+            backButtonPressed = Keyboard.GetState().IsKeyDown(Keys.Escape);
 #endif
 #if WINDOWS_PHONE
             backButtonPressed = GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed;
 #endif
 
             backButtonClick = !backButtonPressed && lastBackButtonPressed;
-            
-
-            if (backButtonPressed)
-            {
-                backButtonPressedCount += 1;
-            }
-            else
-            {
-                backButtonPressedCount = 0;
-            }
 
             switch (Game1.state)
             {

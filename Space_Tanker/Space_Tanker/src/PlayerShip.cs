@@ -309,7 +309,7 @@ namespace Space_Tanker.src
             else
             {
                 body.ApplyForce(new Vector2((float)-Math.Sin(body.Rotation) * force * 2f, (float)Math.Cos(body.Rotation) * force * 2f), body.Position);
-                body.health --;
+                body.health--;
 
                 if (Math.Abs(body.LinearVelocity.X) + Math.Abs(body.LinearVelocity.Y) > maxLinearVelocity)
                 {
