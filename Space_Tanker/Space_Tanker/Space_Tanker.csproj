@@ -222,7 +222,18 @@
     <Compile Include="src\Tileset.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Documentos\TODO.txt" />
+    <Content Include="..\..\..\..\..\..\..\..\Backup\Projetos\Space Tanker\Documentação\documentos\armas.txt">
+      <Link>Documentos\armas.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\..\..\..\..\..\Backup\Projetos\Space Tanker\Documentação\documentos\setores.txt">
+      <Link>Documentos\setores.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\..\..\..\..\..\Backup\Projetos\Space Tanker\Documentação\documentos\TODO.txt">
+      <Link>Documentos\TODO.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
@@ -257,8 +268,18 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Documentos\doc_st_v2.docx" />
-    <None Include="Documentos\GDD.docx" />
+    <None Include="..\..\..\..\..\..\..\..\Backup\Projetos\Space Tanker\Documentação\documentos\doc_st_v2.docx">
+      <Link>Documentos\doc_st_v2.docx</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\..\..\..\..\..\..\Backup\Projetos\Space Tanker\Documentação\documentos\GDD.docx">
+      <Link>Documentos\GDD.docx</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\..\..\..\..\..\..\Backup\Projetos\Space Tanker\Documentação\documentos\projeto jogo.docx">
+      <Link>Documentos\projeto jogo.docx</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XNA Framework 4.0 Redist.msi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

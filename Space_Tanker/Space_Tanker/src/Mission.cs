@@ -250,6 +250,8 @@ namespace Space_Tanker.src
                 }
             }
 
+            
+
             foreach (EnemyShip enemyShip in enemyShipList)
             {
                 textures2D["enemy" + enemyShip.type].draw((int)enemyShip.position.X, (int)enemyShip.position.Y, (float)enemyShip.rotation);
