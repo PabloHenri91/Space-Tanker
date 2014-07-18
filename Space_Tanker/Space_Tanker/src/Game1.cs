@@ -236,8 +236,8 @@ namespace Space_Tanker.src
                 if (!needToDraw)
                 {
 #if !DEBUG
-                    this.SuppressDraw();
                     Sleep();
+                    this.SuppressDraw();
 #else
                     drawCount--;
 #endif
@@ -309,7 +309,6 @@ namespace Space_Tanker.src
                         break;
                 }
             }
-
         }
 
         protected override void Draw(GameTime gameTime)

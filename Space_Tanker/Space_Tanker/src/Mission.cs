@@ -13,6 +13,10 @@ namespace Space_Tanker.src
 {
     internal class Mission : State
     {
+        internal enum states { mission, loading, pause };
+        states state;
+        states nextState;
+
         internal PlayerShip playerShip;
         private Vector2 hudPosition;
 
@@ -38,6 +42,9 @@ namespace Space_Tanker.src
         internal Mission()
             : base()
         {
+            state = states.loading;
+            nextState = states.mission;
+
             //Enemies
             for (int i = 1; i <= Game1.memoryCard.mission + 1; i++)
             {
@@ -110,37 +117,115 @@ namespace Space_Tanker.src
 
         internal void doLogic()
         {
-            if (Game1.input.backButtonClick)
+            if (state == nextState)
             {
-                needToJump = !needToJump;
-            }
-            if (needToJump)
-            {
-                playerShip.jump();
-                Game1.input.backButtonPressedCount++;
+                switch (state)
+                {
+                    case states.mission:
+                        {
+                            if (Game1.input.backButtonClick)
+                            {
+                                needToJump = !needToJump;
+                            }
+                            if (needToJump)
+                            {
+                                playerShip.jump();
+                                Game1.input.backButtonPressedCount++;
+                            }
+                            else
+                            {
+                                Game1.input.backButtonPressedCount = 0;
+                            }
+
+                            Game1.world.Step(3f / Game1.fps);
+                            Game1.needToDraw = true;
+
+                            playerShip.updatePlayer();
+                            translateMatrix(playerShip.position.X, playerShip.position.Y);
+                            playerShip.shoot = false;
+                            updateEnemies();
+
+                            playerShip.updateWeapons();
+                            updateShots();
+
+                            if (playerShip.body.IsDisposed)
+                            {
+                                Game1.nextState = Game1.states.mainMenu;
+                            }
+
+                            explosionParticleSystem.Update();
+                        }
+                        break;
+                    case states.pause:
+                        break;
+                }
             }
             else
             {
-                Game1.input.backButtonPressedCount = 0;
+                //reloadNextState
+                switch (nextState)
+                {
+                    case states.mission:
+                        break;
+                    case states.pause:
+                        break;
+                }
+                state = nextState;
+                Game1.needToDraw = true;
             }
+        }
 
-            Game1.world.Step(3f / Game1.fps);
-            Game1.needToDraw = true;
+        internal void draw()
+        {
 
-            playerShip.updatePlayer();
-            translateMatrix(playerShip.position.X, playerShip.position.Y);
-            playerShip.shoot = false;
-            updateEnemies();
-
-            playerShip.updateWeapons();
-            updateShots();
-
-            if (playerShip.body.IsDisposed)
+            switch (state)
             {
-                Game1.nextState = Game1.states.mainMenu;
+                case states.mission:
+                    {
+                        drawMission();
+                    }
+                    break;
+                case states.pause:
+                    {
+                        drawMission();
+                    }
+                    break;
+            }
+        }
+
+        private void drawMission()
+        {
+            Game1.spriteBatch.End();
+
+            Game1.spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearWrap, null, Game1.scissorTestRasterizerState, null, Game1.display.camera);
+            textures2D["smallStars"].drawStars((int)playerShip.position.X / 4, (int)playerShip.position.Y / 4);
+            textures2D["bigStars"].drawStars((int)playerShip.position.X, (int)playerShip.position.Y);
+            Game1.spriteBatch.End();
+
+            Game1.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, Game1.scissorTestRasterizerState, null, Game1.display.camera);
+
+            foreach (KeyValuePair<string, List<Shot>> list in shotList)
+            {
+                foreach (Shot shot in list.Value)
+                {
+                    textures2D[list.Key + "Shot"].draw((int)shot.position.X, (int)shot.position.Y, (float)(shot.rotation + MathHelper.Pi));
+                }
             }
 
-            explosionParticleSystem.Update();
+
+
+            foreach (EnemyShip enemyShip in enemyShipList)
+            {
+                textures2D["enemy" + enemyShip.type].draw((int)enemyShip.position.X, (int)enemyShip.position.Y, (float)enemyShip.rotation);
+                enemyShip.drawHealthBar();
+            }
+
+            textures2D["player" + Game1.memoryCard.shipIndex].draw((int)playerShip.position.X, (int)playerShip.position.Y, (float)playerShip.rotation);
+            playerShip.drawHealthBar();
+
+            explosionParticleSystem.Draw();
+
+            drawHUD();
         }
 
         private void translateMatrix(float x, float y)
@@ -229,43 +314,6 @@ namespace Space_Tanker.src
             int type = Game1.random.Next(1, Game1.memoryCard.mission + 1);
             EnemyShip enemyShip = new EnemyShip(textures2D["enemy" + type].width, textures2D["enemy" + type].height, type);
             enemyShipList.Add(enemyShip);
-        }
-
-        internal void draw()
-        {
-            Game1.spriteBatch.End();
-
-            Game1.spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearWrap, null, Game1.scissorTestRasterizerState, null, Game1.display.camera);
-            textures2D["smallStars"].drawStars((int)playerShip.position.X / 4, (int)playerShip.position.Y / 4);
-            textures2D["bigStars"].drawStars((int)playerShip.position.X, (int)playerShip.position.Y);
-            Game1.spriteBatch.End();
-
-            Game1.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, Game1.scissorTestRasterizerState, null, Game1.display.camera);
-
-            foreach (KeyValuePair<string, List<Shot>> list in shotList)
-            {
-                foreach (Shot shot in list.Value)
-                {
-                    textures2D[list.Key + "Shot"].draw((int)shot.position.X, (int)shot.position.Y, (float)(shot.rotation + MathHelper.Pi));
-                }
-            }
-
-            
-
-            foreach (EnemyShip enemyShip in enemyShipList)
-            {
-                textures2D["enemy" + enemyShip.type].draw((int)enemyShip.position.X, (int)enemyShip.position.Y, (float)enemyShip.rotation);
-                enemyShip.drawHealthBar();
-            }
-
-            textures2D["player" + Game1.memoryCard.shipIndex].draw((int)playerShip.position.X, (int)playerShip.position.Y, (float)playerShip.rotation);
-            playerShip.drawHealthBar();
-
-            explosionParticleSystem.Draw();
-
-            drawHUD();
-
-
         }
 
         private void drawHUD()

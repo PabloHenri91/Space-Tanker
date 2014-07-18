@@ -163,7 +163,7 @@ namespace Space_Tanker.src
         {
             if (Game1.frameCount - lastShieldRecharge > shieldRechargeInterval)
             {
-                if (body.energyShield + 1 < body.maxEnergyShield)
+                if (body.energyShield < body.maxEnergyShield)
                 {
                     body.energyShield++;
                 }

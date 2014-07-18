@@ -29,22 +29,8 @@ namespace Space_Tanker.src
 
         bool body_OnCollision(Fixture me, Fixture him, Contact contact)
         {
-            if (him.Body.IsBullet)
-            {
-                if (him.Body.isMyBullet)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                this.body.Dispose();
-                return true;
-            }
+            this.body.Dispose();
+            return true;
         }
 
         internal void update()
