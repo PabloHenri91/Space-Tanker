@@ -1,0 +1,12 @@
+1. Alpha Sector
+2. Bravo Sector
+3. Charie Sector
+4. Delta Sector
+5. Echo Sector
+6. Foxtrot Sector
+7. Golf Sector
+8. Hotel Sector
+9. India Sector
+10. Juliet Sector
+
+10 misões em cada setor
