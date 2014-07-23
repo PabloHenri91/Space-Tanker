@@ -65,6 +65,13 @@ namespace Space_Tanker.src
             textures2Dlocations.Add("smallStars");
             textures2Dlocations.Add("bigStars");
 
+            //Pause
+            textures2Dlocations.Add("missionPauseBackground");
+            textures2Dlocations.Add("yes");
+            textures2Dlocations.Add("no");
+            textures2Dlocations.Add("yesPressed");
+            textures2Dlocations.Add("noPressed");
+
             textures2DlocationsCount = textures2Dlocations.Count;
 #if MUSIC
             music = Game1.myContentManager.Load<SoundEffect>("raptor"+ (int)Game1.random.Next(1, 7));
@@ -84,6 +91,12 @@ namespace Space_Tanker.src
                 updatePercentLoaded();
                 return false;
             }
+
+            //Pause
+            textures2D["yes"].setPosition(295, 242);
+            textures2D["yesPressed"].setPosition(295, 242);
+            textures2D["no"].setPosition (405, 242);
+            textures2D["noPressed"].setPosition(405, 242);
 
             Game1.world.Clear();
 
@@ -125,8 +138,10 @@ namespace Space_Tanker.src
                         {
                             if (Game1.input.backButtonClick)
                             {
-                                needToJump = !needToJump;
+                                nextState = states.pause;
+                                return;
                             }
+
                             if (needToJump)
                             {
                                 playerShip.jump();
@@ -157,6 +172,27 @@ namespace Space_Tanker.src
                         }
                         break;
                     case states.pause:
+                        {
+                            needToJump = false;
+                            if (Game1.input.click0 || Game1.input.backButtonClick)
+                            {
+                                if (textures2D["no"].intersectsWithMouseClick() || Game1.input.backButtonClick)
+                                {
+                                    nextState = states.mission;
+                                    return;
+                                }
+                            }
+
+                            if (Game1.input.click0)
+                            {
+                                if (textures2D["yes"].intersectsWithMouseClick())
+                                {
+                                    needToJump = true;
+                                    nextState = states.mission;
+                                    return;
+                                }
+                            }
+                        }
                         break;
                 }
             }
@@ -188,6 +224,25 @@ namespace Space_Tanker.src
                 case states.pause:
                     {
                         drawMission();
+
+                        Game1.spriteBatch.End();
+                        Game1.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, Game1.scissorTestRasterizerState, null, Game1.display.camera);
+
+                        textures2D["missionPauseBackground"].drawOnScreen();
+
+                        textures2D["yes"].drawOnScreen();
+                        textures2D["no"].drawOnScreen();
+                        if (Game1.input.mouse0)
+                        {
+                            if (textures2D["yes"].intersectsWithMouseClick())
+                            {
+                                textures2D["yesPressed"].drawOnScreen();
+                            }
+                            else if (textures2D["no"].intersectsWithMouseClick())
+                            {
+                                textures2D["noPressed"].drawOnScreen();
+                            }
+                        }
                     }
                     break;
             }
