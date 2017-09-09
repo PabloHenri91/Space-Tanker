@@ -30,7 +30,7 @@ namespace Space_Tanker.src
             displayHeightOver2 = displayHeight / 2;
 
 #if WINDOWS
-            graphicsDeviceManager.IsFullScreen = false;
+            graphicsDeviceManager.IsFullScreen = true;
 
             if (graphicsDeviceManager.IsFullScreen)
             {
